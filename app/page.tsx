@@ -17,7 +17,7 @@ const Page = () => {
     >
       <section className="relative isolate overflow-hidden">
         <div
-          className="absolute inset-x-0 top-0 h-[540px]"
+          className="absolute inset-x-0 top-0 h-135 -z-10 transform-gpu overflow-hidden blur-3xl"
           style={{
             background: `radial-gradient(circle at top right, ${colors.primary}22, transparent 38%), linear-gradient(180deg, #ffffff 0%, ${colors.background} 72%)`,
           }}
@@ -33,12 +33,12 @@ const Page = () => {
           >
             <div className="relative overflow-hidden rounded-3xl">
               <Image
-                src="/images/banners/banner.png"
+                src="/images/banner.png"
                 alt="Store banner featuring fashion, accessories, and electronics offers"
                 width={1536}
                 height={913}
                 priority
-                className="h-[260px] w-full object-cover sm:h-[340px] lg:h-[420px]"
+                className="h-65 w-full object-cover sm:h-85 lg:h-105"
               />
             </div>
 
@@ -47,21 +47,19 @@ const Page = () => {
                 className="text-xs font-semibold uppercase tracking-[0.28em] sm:text-sm"
                 style={{ color: colors.primary }}
               >
-                Main banner
+                NEW COLLECTION
               </p>
               <h1 className="mt-3 text-3xl font-black leading-tight sm:text-5xl lg:text-6xl">
                 Fresh arrivals for
                 <span className="block" style={{ color: colors.primary }}>
-                  every collection.
+                  every Style.
                 </span>
               </h1>
               <p
                 className="mx-auto mt-4 max-w-2xl text-sm leading-7 sm:text-base"
                 style={{ color: colors.textSecondary }}
               >
-                Start from the banner, explore the main categories, and keep the
-                collection images visible in a clean layout inspired by your
-                wireframe.
+  Discover trending fashion and essentials for every style. Shop now and elevate your wardrobe with our latest arrivals.
               </p>
               <div className="mt-7 flex justify-center">
                 <Link
@@ -93,7 +91,7 @@ const Page = () => {
               className="text-sm font-semibold uppercase tracking-[0.25em]"
               style={{ color: colors.primary }}
             >
-              Shop by category
+              Start your style journey
             </p>
             <h2 className="mt-2 text-3xl font-black sm:text-4xl">
               Browse the main collections

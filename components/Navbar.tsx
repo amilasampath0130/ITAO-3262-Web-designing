@@ -16,16 +16,19 @@ export default function Navbar() {
       style={{
         backgroundColor: "rgba(248,250,252,0.92)",
         borderColor: `${colors.primary}14`,
+        boxShadow: `0 10px 30px ${colors.primary}10`,
       }}
     >
       <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
-        <Link
-          href="/"
-          className="text-lg font-black tracking-wide sm:text-xl"
-          style={{ color: colors.textPrimary }}
-        >
-          My E-commerce
-        </Link>
+        <div className="flex md:justify-center sm:justify-center ">
+          <Link
+            href="/"
+            className=" text-lg font-black tracking-wide sm:text-xl  "
+            style={{ color: colors.textPrimary }}
+          >
+            we mart cooperation
+          </Link>
+        </div>
         <div className="flex flex-wrap items-center gap-1 sm:gap-2">
           {navLinks.map((link) => (
             <Link
