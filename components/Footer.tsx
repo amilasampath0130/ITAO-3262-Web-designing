@@ -31,21 +31,7 @@ export default function Footer() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 lg:justify-center">
-          {footerLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-full px-3 py-1.5 text-sm font-semibold transition-colors duration-200 hover:bg-blue-50"
-              style={{
-                color: colors.primary,
-                backgroundColor: `${colors.primary}0d`,
-              }}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
+
 
         <p className="text-sm" style={{ color: colors.textSecondary }}>
           229181 - Rathnayake RMAS

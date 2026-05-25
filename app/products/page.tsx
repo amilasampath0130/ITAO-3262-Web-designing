@@ -1,17 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { colors } from "@/constants/colors";
 import { products } from "@/data/product";
+import { addToCart } from "@/utils/cart";
+import Toast from "@/components/Toast";
 
 const categories = Array.from(
   new Set(products.map((product) => product.category)),
 );
-const featuredProducts = products
-  .filter((product) => product.isFeatured)
-  .slice(0, 3);
-const bestSellerCount = products.filter(
-  (product) => product.isBestSeller,
-).length;
 
 const formatCurrency = (price: number) =>
   new Intl.NumberFormat("en-US", {
@@ -23,6 +22,64 @@ const formatCategory = (category: string) =>
   category.charAt(0).toUpperCase() + category.slice(1);
 
 const ProductPage = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [tagFilter, setTagFilter] = useState("all");
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current !== null) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    return products.filter((product) => {
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        product.title.toLowerCase().includes(normalizedSearch) ||
+        product.description.toLowerCase().includes(normalizedSearch) ||
+        product.category.toLowerCase().includes(normalizedSearch);
+
+      const matchesCategory =
+        selectedCategory === "all" || product.category === selectedCategory;
+
+      const matchesTag =
+        tagFilter === "all" ||
+        (tagFilter === "featured" && product.isFeatured) ||
+        (tagFilter === "bestSeller" && product.isBestSeller);
+
+      return matchesSearch && matchesCategory && matchesTag;
+    });
+  }, [searchTerm, selectedCategory, tagFilter]);
+
+  const handleAddToCart = (productId: number) => {
+    addToCart(productId, 1);
+
+    const selectedProduct = products.find(
+      (product) => product.id === productId,
+    );
+    setToastMessage(
+      selectedProduct
+        ? `${selectedProduct.title} added to cart`
+        : "Product added to cart",
+    );
+
+    if (toastTimerRef.current !== null) {
+      window.clearTimeout(toastTimerRef.current);
+    }
+
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastMessage("");
+      toastTimerRef.current = null;
+    }, 2000);
+  };
+
   return (
     <div
       style={{
@@ -30,6 +87,8 @@ const ProductPage = () => {
         color: colors.textPrimary,
       }}
     >
+      <Toast message={toastMessage} />
+
       <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div
           className="rounded-[1.75rem] border p-4 sm:p-5"
@@ -59,6 +118,8 @@ const ProductPage = () => {
                 <input
                   id="product-search"
                   type="text"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
                   placeholder="Search shirts, phones, shoes, and more"
                   className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
                 />
@@ -66,17 +127,42 @@ const ProductPage = () => {
             </div>
             {/* Header category section */}
             <div className="flex flex-wrap gap-2 lg:max-w-xl lg:justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("all")}
+                className="rounded-full px-4 py-2 text-sm font-semibold transition-colors"
+                style={{
+                  color:
+                    selectedCategory === "all"
+                      ? colors.cardBackground
+                      : colors.primary,
+                  backgroundColor:
+                    selectedCategory === "all"
+                      ? colors.primary
+                      : `${colors.primary}0d`,
+                }}
+              >
+                All
+              </button>
               {categories.map((category) => (
-                <span
+                <button
                   key={category}
+                  type="button"
+                  onClick={() => setSelectedCategory(category)}
                   className="rounded-full px-4 py-2 text-sm font-semibold"
                   style={{
-                    color: colors.primary,
-                    backgroundColor: `${colors.primary}0d`,
+                    color:
+                      selectedCategory === category
+                        ? colors.cardBackground
+                        : colors.primary,
+                    backgroundColor:
+                      selectedCategory === category
+                        ? colors.primary
+                        : `${colors.primary}0d`,
                   }}
                 >
                   {formatCategory(category)}
-                </span>
+                </button>
               ))}
             </div>
           </div>
@@ -101,16 +187,47 @@ const ProductPage = () => {
                 ></p>
                 <h2 className="mt-3 text-xl font-black">Categories</h2>
                 <div className="mt-4 space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory("all")}
+                    className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left"
+                    style={{
+                      backgroundColor:
+                        selectedCategory === "all"
+                          ? `${colors.primary}18`
+                          : `${colors.primary}08`,
+                    }}
+                  >
+                    <span className="text-sm font-semibold capitalize">
+                      All
+                    </span>
+                    <span
+                      className="rounded-full px-2.5 py-1 text-xs font-bold"
+                      style={{
+                        color: colors.primary,
+                        backgroundColor: colors.cardBackground,
+                      }}
+                    >
+                      {products.length}
+                    </span>
+                  </button>
                   {categories.map((category) => {
                     const total = products.filter(
                       (product) => product.category === category,
                     ).length;
 
                     return (
-                      <div
+                      <button
                         key={category}
-                        className="flex items-center justify-between rounded-2xl px-4 py-3"
-                        style={{ backgroundColor: `${colors.primary}08` }}
+                        type="button"
+                        onClick={() => setSelectedCategory(category)}
+                        className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left"
+                        style={{
+                          backgroundColor:
+                            selectedCategory === category
+                              ? `${colors.primary}18`
+                              : `${colors.primary}08`,
+                        }}
                       >
                         <span className="text-sm font-semibold capitalize">
                           {category}
@@ -124,9 +241,33 @@ const ProductPage = () => {
                         >
                           {total}
                         </span>
-                      </div>
+                      </button>
                     );
                   })}
+                </div>
+
+                <div className="mt-5 space-y-2">
+                  <label
+                    htmlFor="product-tag-filter"
+                    className="text-xs font-semibold uppercase tracking-[0.2em]"
+                    style={{ color: colors.textSecondary }}
+                  >
+                    Filter
+                  </label>
+                  <select
+                    id="product-tag-filter"
+                    value={tagFilter}
+                    onChange={(event) => setTagFilter(event.target.value)}
+                    className="w-full rounded-2xl border px-3 py-2 text-sm outline-none"
+                    style={{
+                      borderColor: `${colors.primary}20`,
+                      backgroundColor: colors.cardBackground,
+                    }}
+                  >
+                    <option value="all">All products</option>
+                    <option value="featured">Featured only</option>
+                    <option value="bestSeller">Best sellers only</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -143,17 +284,25 @@ const ProductPage = () => {
                 </p>
                 <h2 className="mt-2 text-3xl font-black">All product cards</h2>
               </div>
-              <Link
-                href="/cart"
-                className="text-sm font-semibold"
-                style={{ color: colors.primary }}
-              >
-                View cart
-              </Link>
+              <div className="flex items-center gap-4">
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: colors.textSecondary }}
+                >
+                  Showing {filteredProducts.length}
+                </p>
+                <Link
+                  href="/cart"
+                  className="text-sm font-semibold"
+                  style={{ color: colors.primary }}
+                >
+                  View cart
+                </Link>
+              </div>
             </div>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <article
                   key={product.id}
                   className="group overflow-hidden rounded-[1.75rem] border p-3 sm:p-4"
@@ -235,8 +384,9 @@ const ProductPage = () => {
                       >
                         In stock
                       </span>
-                      <Link
-                        href="/cart"
+                      <button
+                        type="button"
+                        onClick={() => handleAddToCart(product.id)}
                         className="rounded-full px-4 py-2 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5"
                         style={{
                           backgroundColor: colors.primary,
@@ -244,12 +394,30 @@ const ProductPage = () => {
                         }}
                       >
                         Add to cart
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </article>
               ))}
             </div>
+
+            {filteredProducts.length === 0 ? (
+              <div
+                className="mt-6 rounded-3xl border p-6 text-center"
+                style={{
+                  backgroundColor: colors.cardBackground,
+                  borderColor: `${colors.primary}14`,
+                }}
+              >
+                <p className="text-base font-semibold">No products found</p>
+                <p
+                  className="mt-2 text-sm"
+                  style={{ color: colors.textSecondary }}
+                >
+                  Try changing your search text or filter options.
+                </p>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
