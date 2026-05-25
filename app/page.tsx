@@ -7,6 +7,8 @@ const categoryCards = Array.from(
   new Map(products.map((product) => [product.category, product])).values(),
 ).slice(0, 5);
 
+const customerFavorites = products.slice(0, 3);
+
 const Page = () => {
   return (
     <div
@@ -59,7 +61,8 @@ const Page = () => {
                 className="mx-auto mt-4 max-w-2xl text-sm leading-7 sm:text-base"
                 style={{ color: colors.textSecondary }}
               >
-  Discover trending fashion and essentials for every style. Shop now and elevate your wardrobe with our latest arrivals.
+                Discover trending fashion and essentials for every style. Shop
+                now and elevate your wardrobe with our latest arrivals.
               </p>
               <div className="mt-7 flex justify-center">
                 <Link
@@ -154,6 +157,162 @@ const Page = () => {
                 />
               </div>
             </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8 lg:pb-16">
+        <div
+          className="rounded-4xl border p-6 sm:p-8"
+          style={{
+            backgroundColor: colors.cardBackground,
+            borderColor: `${colors.primary}14`,
+            boxShadow: `0 16px 36px ${colors.primary}12`,
+          }}
+        >
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p
+                className="text-sm font-semibold uppercase tracking-[0.25em]"
+                style={{ color: colors.primary }}
+              >
+                Why customers choose us
+              </p>
+              <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+                Everything you need in one place
+              </h2>
+            </div>
+            <Link
+              href="/contact"
+              className="text-sm font-semibold"
+              style={{ color: colors.primary }}
+            >
+              Need help?
+            </Link>
+          </div>
+
+          <div className="mt-7 grid gap-4 md:grid-cols-3">
+            <article
+              className="rounded-3xl border p-5"
+              style={{
+                borderColor: `${colors.primary}14`,
+                backgroundColor: `${colors.primary}06`,
+              }}
+            >
+              <h3 className="text-lg font-black">Fast delivery</h3>
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: colors.textSecondary }}
+              >
+                Quick and reliable shipping with order updates so you always
+                know where your package is.
+              </p>
+            </article>
+
+            <article
+              className="rounded-3xl border p-5"
+              style={{
+                borderColor: `${colors.primary}14`,
+                backgroundColor: `${colors.primary}06`,
+              }}
+            >
+              <h3 className="text-lg font-black">Secure payments</h3>
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: colors.textSecondary }}
+              >
+                Shop with confidence using trusted payment methods and protected
+                checkout experience.
+              </p>
+            </article>
+
+            <article
+              className="rounded-3xl border p-5"
+              style={{
+                borderColor: `${colors.primary}14`,
+                backgroundColor: `${colors.primary}06`,
+              }}
+            >
+              <h3 className="text-lg font-black">Friendly support</h3>
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: colors.textSecondary }}
+              >
+                Our support team is ready to help with product questions,
+                delivery issues, and returns.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p
+              className="text-sm font-semibold uppercase tracking-[0.25em]"
+              style={{ color: colors.primary }}
+            >
+              Customer favorites
+            </p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">
+              Trending picks this week
+            </h2>
+          </div>
+          <Link
+            href="/products"
+            className="text-sm font-semibold"
+            style={{ color: colors.primary }}
+          >
+            See more picks
+          </Link>
+        </div>
+
+        <div className="mt-7 grid gap-4 md:grid-cols-3">
+          {customerFavorites.map((product) => (
+            <article
+              key={product.id}
+              className="overflow-hidden rounded-3xl border p-4"
+              style={{
+                backgroundColor: colors.cardBackground,
+                borderColor: `${colors.primary}14`,
+                boxShadow: `0 12px 30px ${colors.primary}10`,
+              }}
+            >
+              <div className="relative aspect-4/3 overflow-hidden rounded-2xl">
+                <Image
+                  src={product.image}
+                  alt={product.title}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 768px) 30vw, 92vw"
+                />
+              </div>
+
+              <h3 className="mt-4 text-lg font-black">{product.title}</h3>
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: colors.textSecondary }}
+              >
+                {product.description}
+              </p>
+
+              <div className="mt-4 flex items-center justify-between">
+                <span
+                  className="text-sm font-semibold uppercase"
+                  style={{ color: colors.primary }}
+                >
+                  {product.category}
+                </span>
+                <Link
+                  href="/products"
+                  className="rounded-xl px-3 py-1.5 text-xs font-bold uppercase text-white"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  Shop
+                </Link>
+              </div>
+            </article>
           ))}
         </div>
       </section>

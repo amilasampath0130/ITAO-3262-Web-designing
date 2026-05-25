@@ -1,6 +1,8 @@
-'use client';
+"use client";
 import Image from "next/image";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { colors } from "@/constants/colors";
+import Toast from "@/components/Toast";
 
 const contactMethods = [
   { label: "Phone", value: "+94 70 632 0234" },
@@ -9,12 +11,32 @@ const contactMethods = [
   { label: "Office", value: "Badulla, Sri Lanka" },
   { label: "Hours", value: "8:30 AM - 6:00 PM" },
 ];
-export const handleSubmit = () => {
-  alert("Message sent successfully! We will get back to you soon.");
-} 
-
-
 const ContactPage = () => {
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current !== null) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setToastMessage("Message sent successfully! We will get back to you soon.");
+
+    if (toastTimerRef.current !== null) {
+      window.clearTimeout(toastTimerRef.current);
+    }
+
+    toastTimerRef.current = window.setTimeout(() => {
+      setToastMessage("");
+      toastTimerRef.current = null;
+    }, 2200);
+  };
+
   return (
     <div
       style={{
@@ -22,6 +44,8 @@ const ContactPage = () => {
         color: colors.textPrimary,
       }}
     >
+      <Toast message={toastMessage} />
+
       <section className="relative isolate overflow-hidden border-b">
         <div
           className="absolute inset-x-0 top-0 h-72"
@@ -91,7 +115,7 @@ const ContactPage = () => {
               We reply quickly with order, delivery, and product support.
             </h2>
 
-            <form className="mt-6 space-y-4">
+            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label
@@ -175,7 +199,6 @@ const ContactPage = () => {
               </div>
 
               <button
-              onClick={handleSubmit}
                 type="submit"
                 className="inline-flex w-full items-center justify-center rounded-2xl px-6 py-3 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 sm:w-auto"
                 style={{
@@ -231,8 +254,6 @@ const ContactPage = () => {
               ))}
             </div>
           </div>
-
-
         </div>
       </section>
     </div>
